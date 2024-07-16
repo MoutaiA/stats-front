@@ -7,19 +7,15 @@ function App() {
 	const [clientID, setClientID] = useState('');
 	useEffect(() => {
 		axios
-			.get('http://localhost:3000/')
+			.get('http://localhost:3000/api/client-id')
 			.then((res) => setClientID(res.data.clientID))
 			.catch((err) => console.error(err));
 	});
 
 	const handleClick = () => {
-		axios
-			.post(
-				`http://www.strava.com/oauth/authorize?client_id=${clientID}&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=read`
-			)
-			.then((res) => res.json())
-			.then((res) => console.log('res', res))
-			.catch((err) => console.error(err));
+		const redirectUri = encodeURIComponent('http://localhost:3000/exchange_token');
+		const stravaAuthUrl = `https://www.strava.com/oauth/authorize?client_id=${clientID}&redirect_uri=${redirectUri}&response_type=code&scope=read,activity:write`;
+		window.location.href = stravaAuthUrl;
 	};
 
 	return (
